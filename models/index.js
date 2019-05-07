@@ -7,7 +7,7 @@ useFindAndModify: false, useCreateIndex: true })
     .catch((err) => console.log(err));
 
 module.exports = {
-    User:
-    Post:
-    City:
+    User: require('./user'),
+    Post: require('./post'),
+    City: require('/city')
 };
