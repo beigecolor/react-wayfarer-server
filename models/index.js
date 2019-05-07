@@ -9,5 +9,5 @@ useFindAndModify: false, useCreateIndex: true })
 module.exports = {
     User: require('./user'),
     Post: require('./post'),
-    City: require('/city')
+    City: require('./city')
 };
