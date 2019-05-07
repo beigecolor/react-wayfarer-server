@@ -643,55 +643,61 @@ const postsData = [
 ];
 
 const seedDatabase = async () => {
-    // remove records first all users// await is the call to use for to wait till everything ends //
-    const deletedUsers = await db.User.deleteMany();
-    console.log(`deleted ${deletedUsers.deletedCount} users..`);
+    try {
+        // remove records first all users// await is the call to use for to wait till everything ends //
+        const deletedUsers = await db.User.deleteMany();
+        console.log(`deleted ${deletedUsers.deletedCount} users..`);
 
-    //delete all cities//
-    const deletedCities = await db.City.deleteMany();
-    console.log(`deleted ${deletedCities.deletedCount} cities..`);
+        //delete all cities//
+        const deletedCities = await db.City.deleteMany();
+        console.log(`deleted ${deletedCities.deletedCount} cities..`);
 
-    //delete all post//
-    const deletedPost = await db.Post.deleteMany();
-    console.log(`deleted ${deletedPost.deletedCount} post ..`);
+        //delete all post//
+        const deletedPost = await db.Post.deleteMany();
+        console.log(`deleted ${deletedPost.deletedCount} post ..`);
 
-    //hash user passwords //
-    for (const user in usersData) {
-        const hasedPassword = await bycrypt.hashSync(usersData[user].password, 10);
-        usersData[user].password = hasedPassword;
+        //hash user passwords //
+        for (const user in usersData) {
+            const hasedPassword = await bycrypt.hashSync(usersData[user].password, 10);
+            usersData[user].password = hasedPassword;
+        }
+
+        //password hashed display console //
+        console.log(usersData[usersData.length - 1]);
+
+        // create records //
+        const newUsers = await db.User.create(usersData);
+        console.log(`created ${newUsers.length} users...`);
+
+        const newCities = await db.City.create(cityData);
+        console.log(`created ${newCities.length} cities..`);
+
+        const newPosts = await db.Post.create(postsData);
+        console.log(`created ${newPosts.length} posts...`);
+        
+
+        // associate models cities/post/users //
+        console.log('associating models');
+
+        for (const post in newPosts) {
+            const randomIndex = arr => Math.floor(Math.random() * arr.length);
+            // console.log('Random Index = ', randomIndex(newPosts));
+
+            newPosts[post].user_id = newUsers[randomIndex(newUsers)];
+
+            newPosts[post].city_id = newCities[randomIndex(newCities)];
+
+            // save posts //
+
+            await newPosts[post].save();
+            
     }
-
-    //password hashed display console //
-    console.log(usersData[usersData.length - 1]);
-
-    // create records //
-    const newUsers = await db.User.create(usersData);
-    console.log(`created ${newUsers.length} users...`);
-
-    const newCities = await db.City.create(cityData);
-    console.log(`created ${newCities.length} cities..`);
-
-    const newPosts = await db.Post.create(postsData);
-    console.log(`created ${newPosts.length} posts...`);
-    
-
-    // associate models cities/post/users //
-    console.log('associating models');
-
-    for (const post in newPosts) {
-        const randomIndex = arr => Math.floor(Math.random() * arr.length);
-        // console.log('Random Index = ', randomIndex(newPosts));
-
-        newPosts[post].user_id = newUsers[randomIndex(newUsers)];
-
-        newPosts[post].city_id = newCities[randomIndex(newCities)];
-
-        // save posts //
-
-        await newPosts[post].save();
+        console.log('exiting');
+        process.exit();
+        
+    } catch (err) {
+        console.log(err);
     }
-    console.log('exiting');
-    process.exit();
 }
 
 seedDatabase();
