@@ -46,6 +46,12 @@ app.get('/', (req, res) => res.send('<h1>WayFarer Api</h1>'));
 // auth routes
 app.use('/api/v1/auth', ctrl.auth);
 
+//users route
+app.use('/api/v1/users', ctrl.users);
+
+//post Routes
+app.use('/api/v1/posts', ctrl.posts);
+
 //--------start server------//
 
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));
